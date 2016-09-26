@@ -7,17 +7,18 @@ import codecs
 import  urllib
 
 app=Flask(__name__)
-token=<token>
+token=<token> #put the page token from Facebook apps
+page_link=<url> #eg /fdffdfefre1213
+verify_token=<token> #in webhooks
 reader=codecs.getreader('utf-8')
-@app.route('/fdffdfefre12123',methods=['GET'])
+@app.route(page_link,methods=['GET'])
 def home():    
-    if request.args['hub.verify_token'] == 'ente#devame1':         
+    if request.args['hub.verify_token'] == token:         
         return make_response(request.args['hub.challenge'])
 
-@app.route('/fdffdfefre12123',methods=['POST'])
+@app.route(page_link,methods=['POST'])
 def echo():  
-    body=request.get_json()
-    #rint(body['entry'])    
+    body=request.get_json()      
     for e in body['entry']:        
         for m in e['messaging']:
             try:
