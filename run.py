@@ -7,7 +7,7 @@ import codecs
 import  urllib
 
 app=Flask(__name__)
-token="EAALzGF60lYMBAKoBEIv7ZADu4jvGixHU6OT0zHt3RZBTvgL6PguURlPaU63md976HPPoSZCv0z30DTAkGSGaGoDTWwWeyBhgKaRv2IW7h4Iue3curhkKm6NXNnknwvrvNVs6ZCYqGPicKilZA8q1HZA3guJlZAAFXyvPyBZB8o9PLQZDZD"
+token=<token>
 reader=codecs.getreader('utf-8')
 @app.route('/fdffdfefre12123',methods=['GET'])
 def home():    
