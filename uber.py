@@ -1,13 +1,13 @@
-import requests
+import urllib
 
-url = 'https://api.uber.com/v1/products'
+def uber_estimates(lat,lon,uber_server_token):    
+    url = 'https://api.uber.com/v1/products?'
 
-parameters = {
-    'server_token': 'INSERT_SERVER_TOKEN_HERE',
-    'latitude': 37.775818,
-    'longitude': -122.418028,
-}
-
-response = requests.get(url, params=parameters)
-
-data = response.json()
+    parameters = {
+    'server_token': uber_server_token,
+    'latitude': lat,
+    'longitude': lon,
+    }    
+    response = urllib.request.Request(url+urllib.parse.urlencode(parameters))
+    data = urllib.request.urlopen(response).read()
+    return (data)
