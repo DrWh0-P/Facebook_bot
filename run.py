@@ -21,6 +21,8 @@ token=creds['fb_page_token'] #put the page token from Facebook apps
 page_link=creds['page_link'] #eg fdffdfefre1213
 verify_token=creds['fb_verify_token'] #webhook
 uber_server_token=creds['uber_server_token']
+uber_client_id=creds['uber_client_id']
+uber_client_secret=creds['uber_client_secret']
 
 @app.route(page_link,methods=['GET'])
 def home():    
@@ -37,13 +39,16 @@ def echo():
                 if 'text' in m['message']:
                     if re.match('uber',m['message']['text']) is not None:
                         send_text(sender,"what is your current location")
+                    elif re.match('how long',m['message']['text']) is not None:
+                        text="https://login.uber.com/oauth/v2/authorize?client_id={}&response_type=code".format(uber_client_id)
+                        send_text(sender,text)
                     else:                                    
                         send_text(sender,"How may I help you")
                 elif ('attachments' in m['message']) :                    
                     lat=m['message']['attachments'][0]['payload']['coordinates']['lat']
                     lon=m['message']['attachments'][0]['payload']['coordinates']['long']
                     data=json.loads(uber_estimates(lat,lon,uber_server_token).decode('utf-8'))
-                    text=""
+                    
                     for p in data['products']:
                         text=text+","+p['display_name']
                     send_text(sender,text)
@@ -53,6 +58,19 @@ def echo():
                    
     return make_response("",200)
 
+@app.route('/submit')
+def submit():
+    code=request.args['code']
+    params={'client_secret':uber_client_secret
+            ,'client_id':uber_client_id
+            ,'grant_type':'authorization_code'
+            ,'redirect_uri':'http://localhost:5000/submit'
+            ,'code':code}
+    payload=urllib.parse.urlencode(params).encode()
+    r=urllib.request.Request('https://login.uber.com/oauth/v2/token',data=payload)
+    resp=json.loads(urllib.request.urlopen(r).read().decode('utf-8'))
+    print(resp['access_token'])
+    return make_response("",200)
 
 def send_text(sender,text):    
      payload = urllib.parse.urlencode({'recipient': {'id': sender}, 'message': {'text': text}} ).encode()
