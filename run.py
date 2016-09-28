@@ -6,7 +6,7 @@ import json
 import codecs
 import  urllib
 import re
-from uber import uber_estimates
+from uber import uber_estimates,uber_authentication
 
 app=Flask(__name__)
 creds={}
@@ -59,18 +59,7 @@ def echo():
     return make_response("",200)
 
 @app.route('/submit')
-def submit():
-    code=request.args['code']
-    params={'client_secret':uber_client_secret
-            ,'client_id':uber_client_id
-            ,'grant_type':'authorization_code'
-            ,'redirect_uri':'http://localhost:5000/submit'
-            ,'code':code}
-    payload=urllib.parse.urlencode(params).encode()
-    r=urllib.request.Request('https://login.uber.com/oauth/v2/token',data=payload)
-    resp=json.loads(urllib.request.urlopen(r).read().decode('utf-8'))
-    print(resp['access_token'])
-    return make_response("",200)
+uber_authentication()
 
 def send_text(sender,text):    
      payload = urllib.parse.urlencode({'recipient': {'id': sender}, 'message': {'text': text}} ).encode()
